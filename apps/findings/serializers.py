@@ -1,8 +1,8 @@
 from rest_framework import serializers
 
 from apps.findings.models import (
-    Category, 
-    Finding, 
+    Category,
+    Finding,
     Image
 )
 
@@ -26,7 +26,7 @@ class FindingSerializer(serializers.ModelSerializer):
             'description',
             'price',
             'category',
-            'author'
+            'author',
         )
 
 
@@ -35,7 +35,5 @@ class ImageSerializers(serializers.ModelSerializer):
         model = Image
         fields = (
             'photo',
-            'is_preview'
+            'is_preview',
         )
-
-

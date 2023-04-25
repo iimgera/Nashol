@@ -1,13 +1,11 @@
 from django.db import models
 from django.core import validators
 from django.contrib.auth.models import AbstractUser
-from uuid import uuid4
-
-from apps.common.constants import UserType
-from apps.common.models import AbstractBaseModel
-
 from django.contrib.auth.base_user import BaseUserManager
 from django.utils.translation import gettext_lazy as _
+
+
+from apps.common.constants import UserType
 
 
 class CustomUserManager(BaseUserManager):
@@ -49,47 +47,49 @@ class User(AbstractUser):
         return self.email
 
 
-# class UserProfile(AbstractUser, AbstractBaseModel):
-#     number = models.CharField(
-#         max_length=60, 
-#         verbose_name='Номер телефона'
-#     )
-#     type = models.CharField(
-#         max_length=10, 
-#         choices=UserType.choices, 
-#         default = UserType.CONSUMER,
-#         verbose_name='Тип пользователя' 
-#     )
-#     # POSTGIS
-#     geo = models.CharField(
-#         max_length=100, 
-#         blank=True, 
-#         null=True ,
-#         verbose_name='Геолокация'
-#     )
-#     rating = models.PositiveIntegerField(
-#         default=0, 
-#         blank=True, 
-#         null=True, 
-#         verbose_name='Рейтинг'
-#     )
+class UserProfile(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='users'
+    )
+    number = models.CharField(max_length=60, verbose_name='Номер телефона')
+    type = models.CharField(
+        max_length=10,
+        choices=UserType.choices,
+        default=UserType.CONSUMER,
+        verbose_name='Тип пользователя'
+    )
+    # POSTGIS
+    geo = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name='Геолокация'
+    )
+    rating = models.PositiveIntegerField(
+        default=0,
+        blank=True,
+        null=True,
+        verbose_name='Рейтинг'
+    )
 
-#     class Meta:
-#         verbose_name = 'Пользователь'
-#         verbose_name_plural = 'Пользователи'
+    class Meta:
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
 
-#     def __str__(self):
-#         return f'{self.username} Тел: {self.number}'
+    def __str__(self):
+        return f'{self.username} Тел: {self.number}'
 
-#     def clean(self):
-#         super().clean()
-#         if self.type == UserType.PRODUCER:
-#             if self.geo is None:
-#                 raise validators.ValidationError(
-#                     'Геолокация обязательна'
-#                 )
+    def clean(self):
+        super().clean()
+        if self.type == UserType.PRODUCER:
+            if self.geo is None:
+                raise validators.ValidationError(
+                    'Геолокация обязательна'
+                )
 
-#             if self.rating is None:
-#                 raise validators.ValidationError(
-#                     'Рейтинг обязателен'
-#                 )
+            if self.rating is None:
+                raise validators.ValidationError(
+                    'Рейтинг обязателен'
+                )

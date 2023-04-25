@@ -1,20 +1,16 @@
 from django.db import models
 from django_editorjs import EditorJsField
-from uuid import uuid4
 
 from apps.common.models import AbstractBaseModel
-from apps.users.models import User 
+from apps.users.models import User
 
 
 class Category(AbstractBaseModel):
-    name = models.CharField(
-        max_length=120, 
-        verbose_name='Название', 
-    )
+    name = models.CharField(max_length=120, verbose_name='Название')
     parent = models.ForeignKey(
-        'self', 
-        on_delete=models.CASCADE, 
-        related_name='children', 
+        'self',
+        on_delete=models.CASCADE,
+        related_name='children',
         blank=True,
         null=True,
         verbose_name='Родительская категория'
@@ -29,33 +25,26 @@ class Category(AbstractBaseModel):
 
 
 class Finding(AbstractBaseModel):
-    name = models.CharField(
-        max_length=120,
-        verbose_name='Название'
-    )
-    description = EditorJsField(
-        verbose_name='Описание'
-    )
+    name = models.CharField(max_length=120, verbose_name='Название')
+    description = EditorJsField(verbose_name='Описание')
     price = models.DecimalField(
         max_digits=6,
         decimal_places=1,
         verbose_name='Цена'
     )
     author = models.ForeignKey(
-        User, 
-        on_delete=models.CASCADE, 
+        User,
+        on_delete=models.CASCADE,
         related_name='findings',
         verbose_name='Автор'
     )
     category = models.ForeignKey(
-        Category, 
-        on_delete=models.CASCADE, 
+        Category,
+        on_delete=models.CASCADE,
         related_name='findings',
         verbose_name='Категория'
     )
-    is_active = models.BooleanField(
-        default=False
-    )
+    is_active = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = 'Находка'
@@ -67,18 +56,13 @@ class Finding(AbstractBaseModel):
 
 class Image(AbstractBaseModel):
     finding = models.ForeignKey(
-        Finding, 
-        on_delete=models.CASCADE, 
-        related_name='images', 
+        Finding,
+        on_delete=models.CASCADE,
+        related_name='images',
         verbose_name='Картинки'
     )
-    image = models.FileField(
-        upload_to='static/images/%Y/%m/%d/',
-        max_length=255
-    )
-    is_preview = models.BooleanField(
-        default=False
-    )
+    image = models.FileField(upload_to='images/%Y/%m/%d/', max_length=255)
+    is_preview = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = 'Картинка'

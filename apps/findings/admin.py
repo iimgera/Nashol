@@ -1,9 +1,9 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
+
 
 from apps.findings.models import (
-    Category, 
-    Finding, 
+    Category,
+    Finding,
     Image
 )
 
@@ -21,4 +21,3 @@ class FindingAdmin(admin.ModelAdmin):
 @admin.register(Image)
 class ImageAdmin(admin.ModelAdmin):
     pass
-

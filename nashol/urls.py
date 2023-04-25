@@ -1,22 +1,16 @@
 from django.contrib import admin
 from django.urls import path, include
-
-from rest_framework import permissions
-
+from rest_framework import permissions, routers
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
 from apps.findings import views
 from apps.users.views import (
-    RegistrationView, 
+    UserListView,
+    RegistrationView,
     AuthView,
-    UserListView, 
     UserRetrieveUpdateDestroyView
 )
-from apps.users.views import ( 
-    UserListView, 
-    UserRetrieveUpdateDestroyView
-    )
 
 
 schema_view = get_schema_view(
@@ -33,22 +27,24 @@ schema_view = get_schema_view(
 )
 
 
+router = routers.DefaultRouter()
+router.register(r'categories', views.CategoryViewSet)
+router.register(r'findings', views.FindingViewSet)
+
 
 api_v1 = [
-    path('', include('apps.findings.urls')),
-    path('users/', UserListView.as_view(), name='profile-list'),
-    path('users/<uuid:pk>/', UserRetrieveUpdateDestroyView.as_view(), name='profile-detail'),
-    path('register/', RegistrationView.as_view()),
-    path('auth/', AuthView.as_view()),
+    path('users/', UserListView.as_view),
+    path('users/<uuid:pk>/', UserRetrieveUpdateDestroyView.as_view),
+    path('register/', RegistrationView.as_view),
+    path('auth/', AuthView.as_view),
+    path('findings/', include(router.urls)),
 ]
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='redoc'),
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0)),
+    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0)),
 
     path('api/v1/', include(api_v1)),
-
-
 ]
