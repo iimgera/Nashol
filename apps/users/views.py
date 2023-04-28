@@ -11,14 +11,14 @@ from rest_framework.permissions import AllowAny
 from apps.users.serializers import (
     RegistrationSerializer,
     AuthSerializer,
-    UserSerializer,
+    UserProfileSerializer,
 )
 
-from apps.users.models import User
+from apps.users.models import UserProfile
 
 
 class RegistrationView(generics.CreateAPIView):
-    queryset = User.objects.all()
+    queryset = UserProfile.objects.all()
     serializer_class = RegistrationSerializer
     permission_classes = [AllowAny, ]
 
@@ -62,13 +62,15 @@ class AuthView(generics.GenericAPIView):
         return Response(serializer.validated_data, status=status.HTTP_200_OK)
 
 
-class UserListView(generics.ListAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+class UserProfileListView(generics.ListAPIView):
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfileSerializer
     permission_classes = [permissions.IsAuthenticated, ]
 
 
-class UserRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+class UserProfileRetrieveUpdateDestroyView(
+    generics.RetrieveUpdateDestroyAPIView
+):
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfileSerializer
     permission_classes = [permissions.IsAdminUser, ]

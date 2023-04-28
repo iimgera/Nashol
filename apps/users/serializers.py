@@ -4,10 +4,9 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from djoser.serializers import (
     UserCreateSerializer,
-    UserSerializer
 )
 
-from apps.users.models import User
+from apps.users.models import UserProfile, User
 
 
 User = get_user_model()
@@ -25,9 +24,7 @@ class UserTokenSerializer(serializers.ModelSerializer):
 
 
 class RegistrationSerializer(UserCreateSerializer):
-    password = serializers.CharField(
-        write_only=True
-    )
+    password = serializers.CharField(write_only=True)
 
     class Meta(UserCreateSerializer.Meta):
         model = User
@@ -39,18 +36,54 @@ class RegistrationSerializer(UserCreateSerializer):
         )
 
 
+# class AuthSerializer(serializers.Serializer):
+#     username = serializers.CharField()
+#     password = serializers.CharField()
+#     email = serializers.EmailField()
+
+#     def validate(self, data):
+#         username = data.get('username')
+#         password = data.get('password')
+#         email = data.get('email')
+
+#         try:
+#             user = User.objects.get(username=username)
+#         except User.DoesNotExist:
+#             raise serializers.ValidationError('User does not exist.')
+#         try:
+#             user = User.objects.get(email=email)
+#         except User.DoesNotExist:
+#             raise serializers.ValidationError('User does not exist.')
+
+#         if not user.check_password(password):
+#             raise serializers.ValidationError('Invalid password.')
+
+#         refresh = RefreshToken.for_user(user)
+
+#         return {
+#             'user_id': user.id,
+#             'refresh_token': str(refresh),
+#             'access_token': str(refresh.access_token),
+#         }
 class AuthSerializer(serializers.Serializer):
-    username = serializers.CharField()
+    username_or_email = serializers.CharField()
     password = serializers.CharField()
 
     def validate(self, data):
-        username = data.get('username')
+        username_or_email = data.get('username_or_email')
         password = data.get('password')
 
-        try:
-            user = User.objects.get(username=username)
-        except User.DoesNotExist:
-            raise serializers.ValidationError('User does not exist.')
+        user = None
+        if '@' in username_or_email:
+            try:
+                user = User.objects.get(email=username_or_email)
+            except User.DoesNotExist:
+                raise serializers.ValidationError('User does not exist.')
+        else:
+            try:
+                user = User.objects.get(username=username_or_email)
+            except User.DoesNotExist:
+                raise serializers.ValidationError('User does not exist.')
 
         if not user.check_password(password):
             raise serializers.ValidationError('Invalid password.')
@@ -64,26 +97,25 @@ class AuthSerializer(serializers.Serializer):
         }
 
 
-class UserSerializer(UserSerializer):
-    class Meta(UserSerializer.Meta):
-        model = User
-        fields = (
-            'id',
-            'username',
-            'email',
-            'password',
-        )
+# class UserSerializer(UserSerializer):
+#     class Meta(UserSerializer.Meta):
+#         model = UserProfile
+#         fields = (
+#             'id',
+#             'username',
+#             'email',
+#             'password',
+#         )
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = UserProfile
         fields = (
             'id',
-            'created_at',
-            'updated_at',
             'number',
             'type',
             'geo',
             'rating',
+            'user',
         )

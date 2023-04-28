@@ -6,10 +6,10 @@ from drf_yasg import openapi
 
 from apps.findings import views
 from apps.users.views import (
-    UserListView,
+    UserProfileListView,
     RegistrationView,
     AuthView,
-    UserRetrieveUpdateDestroyView
+    UserProfileRetrieveUpdateDestroyView
 )
 
 
@@ -33,10 +33,10 @@ router.register(r'findings', views.FindingViewSet)
 
 
 api_v1 = [
-    path('users/', UserListView.as_view),
-    path('users/<uuid:pk>/', UserRetrieveUpdateDestroyView.as_view),
-    path('register/', RegistrationView.as_view),
-    path('auth/', AuthView.as_view),
+    path('users/', UserProfileListView.as_view()),
+    path('users/<uuid:pk>/', UserProfileRetrieveUpdateDestroyView.as_view()),
+    path('register/', RegistrationView.as_view()),
+    path('auth/', AuthView.as_view()),
     path('findings/', include(router.urls)),
 ]
 

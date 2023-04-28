@@ -6,6 +6,7 @@ from django.utils.translation import gettext_lazy as _
 
 
 from apps.common.constants import UserType
+from apps.common.models import AbstractBaseModel
 
 
 class CustomUserManager(BaseUserManager):
@@ -47,7 +48,7 @@ class User(AbstractUser):
         return self.email
 
 
-class UserProfile(models.Model):
+class UserProfile(AbstractBaseModel):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
